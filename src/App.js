@@ -1,23 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+  const [ input, setInput ] = useState('');
+  const [ tarefas, setTarefas ] = useState([
+    'Pagar a conta de luz',
+    'Estudar React Js'
+  ]);
+
+  useEffect(() => {
+    const tarefasStorage = localStorage.getItem('@tarefa');
+    
+    if(tarefasStorage) {
+      setTarefas(JSON.parse(tarefasStorage))
+    }
+  }, []);
+ 
+  useEffect(() => {
+    localStorage.setItem('@tarefa', JSON.stringify(tarefas));
+  }, [tarefas]);
+
+  function registrar(event) {
+    event.preventDefault();
+    
+    setTarefas([...tarefas, input]);
+    setInput('');
+
+  }
+
+
+  return(
+    <div>
+      <form onSubmit={ registrar}>
+        <h1>Cadastrando Usuário</h1>
+
+        <label>Nome da tarefa:</label><br />
+        <input 
+          value={input}
+          onChange={ (event) => { setInput(event.target.value) } }
+          placeholder='Digite uma tarefa' 
+        /><br /><br />
+
+        <button type="submit">Registrar</button>
+
+      </form>
+
+      <br /><br />
+
+      <ul>
+        { tarefas.map( tarefa => (
+          <li key= { tarefa }>{ tarefa }</li>
+        )) }
+      </ul>
+
+
     </div>
   );
 }
